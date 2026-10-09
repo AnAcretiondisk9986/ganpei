@@ -217,7 +217,7 @@
 
     <!-- ═════ 1 · 首页 ═════ -->
     <section class="slide is-active">
-      <img class="bg" src="ppt-assets/bg-harbour.jpg" alt="">
+      <img class="bg" src="ppt-assets/bg-harbour.webp" fetchpriority="high" decoding="async" alt="">
       <div class="veil"></div>
       <div class="grid"></div>
 
@@ -286,32 +286,32 @@
 
     <!-- ═════ 2–7 · 深圳 / 香港 ═════ -->
     <section class="slide">
-      <img class="photo-img" src="ppt-assets/collage-sz-01.jpg" alt="">
+      <img class="photo-img" data-src="ppt-assets/collage-sz-01.webp" alt="">
       <div class="photo-title"><i></i>深圳 01</div>
       <div class="photo-hint">城市天际线与建筑</div>
     </section>
     <section class="slide">
-      <img class="photo-img" src="ppt-assets/collage-sz-02.jpg" alt="">
+      <img class="photo-img" data-src="ppt-assets/collage-sz-02.webp" alt="">
       <div class="photo-title"><i></i>深圳 02</div>
       <div class="photo-hint">公园、绿地与城市地标</div>
     </section>
     <section class="slide">
-      <img class="photo-img" src="ppt-assets/collage-sz-03.jpg" alt="">
+      <img class="photo-img" data-src="ppt-assets/collage-sz-03.webp" alt="">
       <div class="photo-title"><i></i>深圳 03</div>
       <div class="photo-hint">入夜之后</div>
     </section>
     <section class="slide">
-      <img class="photo-img" src="ppt-assets/collage-hk-01.jpg" alt="">
+      <img class="photo-img" data-src="ppt-assets/collage-hk-01.webp" alt="">
       <div class="photo-title"><i></i>香港 01</div>
       <div class="photo-hint">维多利亚港 · 日与夜</div>
     </section>
     <section class="slide">
-      <img class="photo-img" src="ppt-assets/collage-hk-02.jpg" alt="">
+      <img class="photo-img" data-src="ppt-assets/collage-hk-02.webp" alt="">
       <div class="photo-title"><i></i>香港 02</div>
       <div class="photo-hint">街头与路牌</div>
     </section>
     <section class="slide">
-      <img class="photo-img" src="ppt-assets/collage-hk-03.jpg" alt="">
+      <img class="photo-img" data-src="ppt-assets/collage-hk-03.webp" alt="">
       <div class="photo-title"><i></i>香港 03</div>
       <div class="photo-hint">楼宇、街道与仰角</div>
     </section>
@@ -337,12 +337,34 @@
   var cur = document.getElementById('cur');
   var jump = document.getElementById('jump');
   var i = 0;
+  var imageLoadTimer;
+
+  function loadSlideImage(index){
+    var image = slides[index].querySelector('.photo-img[data-src]');
+    if (!image){
+      image = slides[index].querySelector('.photo-img');
+      if (image) image.fetchPriority = 'high';
+      return;
+    }
+    image.src = image.getAttribute('data-src');
+    image.removeAttribute('data-src');
+    image.fetchPriority = 'high';
+  }
+
+  function scheduleNextImage(index){
+    clearTimeout(imageLoadTimer);
+    imageLoadTimer = setTimeout(function(){
+      if (i === index) loadSlideImage((index + 1) % slides.length);
+    }, 650);
+  }
 
   document.getElementById('total').textContent = slides.length;
 
   function go(n, silent){
     i = (n + slides.length) % slides.length;
     slides.forEach(function(s, k){ s.classList.toggle('is-active', k === i); });
+    loadSlideImage(i);
+    scheduleNextImage(i);
     bar.style.width = ((i + 1) / slides.length * 100) + '%';
     cur.textContent = i + 1;
     if (document.activeElement !== jump) jump.value = i + 1;
