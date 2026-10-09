@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>黄映焜 · 个人介绍</title>
+<style>
+  :root{
+    --bg:#05080F;
+    --fg:#E8F1FF;
+    --muted:#8595B4;
+    --cyan:#38BDF8;
+    --cyan-soft:#BAE6FD;
+    --amber:#FBBF24;
+    --amber-soft:#FDE68A;
+    --ease-out:cubic-bezier(.23,1,.32,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#02040A;
+    font-family:"Microsoft YaHei","微软雅黑",system-ui,-apple-system,sans-serif;
+    color:var(--fg);-webkit-font-smoothing:antialiased}
+  button{font:inherit;cursor:pointer}
+
+  .viewport{position:fixed;inset:0;display:grid;place-items:center}
+
+  /* 16:9 舞台：所有尺寸以容器为基准，任何屏幕比例下版式一致 */
+  .deck{
+    position:relative;
+    width:min(100vw,177.78vh);height:min(100vh,56.25vw);
+    container-type:size;overflow:hidden;background:var(--bg);
+  }
+
+  .slide{position:absolute;inset:0;opacity:0;visibility:hidden;
+    transition:opacity .48s var(--ease-out),visibility .48s}
+  .slide.is-active{opacity:1;visibility:visible}
+
+  /* ══════════ 首页重构：姓名优先，信息分区呈现 ══════════ */
+  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:52% 46%}
+  .slide.is-active .bg{animation:drift 72s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.055)}}
+  .veil{position:absolute;inset:0;background:
+    linear-gradient(90deg,rgba(4,7,16,.72) 0%,rgba(4,7,16,.46) 48%,rgba(4,7,16,.70) 100%),
+    linear-gradient(180deg,rgba(4,7,16,.76) 0%,rgba(4,7,16,.16) 38%,rgba(4,7,16,.88) 100%)}
+  .grid{position:absolute;inset:0;pointer-events:none;opacity:.65;background-image:
+    linear-gradient(rgba(56,189,248,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,189,248,.035) 1px,transparent 1px);
+    background-size:4.6cqw 4.6cqw;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 44%,#000 12%,transparent 74%);
+            mask-image:radial-gradient(ellipse at 50% 44%,#000 12%,transparent 74%)}
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:4.2cqh 5cqw 7cqh}
+  .top{display:flex;align-items:center;gap:.85cqw;flex:0 0 auto;font-size:1.12cqw;
+    letter-spacing:.30em;color:var(--muted)}
+  .top .dot{width:.6cqw;height:.6cqw;border-radius:50%;background:var(--cyan);box-shadow:0 0 1cqw var(--cyan)}
+  .top .no{margin-left:auto;font-variant-numeric:tabular-nums;color:#8494AF}
+
+  .home-main{flex:1;min-height:0;display:grid;grid-template-columns:1.55fr 1fr;
+    align-items:center;gap:3cqw;padding:1cqh 0 2.2cqh}
+  .identity{min-width:0}
+  .eyebrow{margin-bottom:1.4cqh;font-size:clamp(12px,1.1cqw,18px);font-weight:700;
+    letter-spacing:.25em;color:#AAB8D1}
+  .name{font-size:17.6cqw;line-height:.92;font-weight:900;letter-spacing:-.045em;white-space:nowrap;
+    background:linear-gradient(100deg,#FFFFFF 0%,#DFF2FF 58%,#FDE68A 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 2.4cqw rgba(56,189,248,.30)) drop-shadow(0 .4cqh 1cqw rgba(0,0,0,.48))}
+  .identity-meta{display:flex;align-items:center;gap:.9cqw;flex-wrap:wrap;margin-top:2.7cqh}
+  .role{padding:.35cqh .85cqw;border-left:.22cqw solid var(--amber);
+    color:#FFF5D8;font-size:clamp(15px,1.48cqw,24px);font-weight:800;letter-spacing:.05em;
+    background:linear-gradient(90deg,rgba(251,191,36,.16),transparent)}
+  .meta-dot{width:.3cqw;height:.3cqw;border-radius:50%;background:var(--cyan);opacity:.9}
+  .meta-text{font-size:clamp(14px,1.28cqw,22px);font-weight:600;color:#D5E2F5;letter-spacing:.02em}
+
+  .contact-focus{min-width:0;padding:1.8cqh 0 1.8cqh 2.2cqw;border-left:1px solid rgba(56,189,248,.42)}
+  .section-label{font-size:clamp(12px,1.02cqw,17px);font-weight:700;letter-spacing:.24em;color:#9DB0CF}
+  .contact-focus-row{display:flex;align-items:center;gap:1.35cqw;margin-top:1.5cqh}
+  .contact-qr{display:block;flex:0 0 auto;width:clamp(220px,14cqw,280px);height:auto;
+    border-radius:.75cqw;background:#fff;padding:.48cqw;
+    box-shadow:0 1.2cqh 2.6cqw rgba(0,0,0,.36),0 0 2.2cqw rgba(56,189,248,.18)}
+  .contact-focus-copy{min-width:0}
+  .contact-method{font-size:clamp(14px,1cqw,17px);font-weight:650;color:#D5E2F5}
+  .contact-site-label{margin-top:1.35cqh;font-size:clamp(12px,.88cqw,15px);
+    color:#8CCFF1;letter-spacing:.13em}
+  .contact-site{display:block;margin-top:.45cqh;font-size:clamp(16px,1.22cqw,20px);
+    line-height:1.25;font-weight:800;color:#F2F7FF;word-break:break-word;text-decoration:none}
+  .contact-site:hover{color:var(--cyan-soft)}
+  .contact-hint{margin-top:1.4cqh;font-size:clamp(11px,.82cqw,14px);color:#8EA0BD}
+
+  .details{flex:0 0 auto;min-height:22cqh;display:grid;grid-template-columns:1.25fr .9fr;
+    align-items:start;border-top:1px solid rgba(186,230,253,.22);padding-top:2.1cqh}
+  .detail-block{min-width:0;padding:0 1.8cqw}
+  .detail-block:first-child{padding-left:0}
+  .detail-block+.detail-block{border-left:1px solid rgba(186,230,253,.18)}
+  .detail-heading{display:flex;align-items:center;gap:.72cqw;margin-bottom:1.55cqh}
+  .detail-heading .index{color:var(--cyan);font-size:clamp(10px,.78cqw,13px);font-weight:800;letter-spacing:.12em}
+  .detail-heading h2{font-size:clamp(12px,1.02cqw,16px);font-weight:700;letter-spacing:.16em;color:#B7C7DF}
+  .study-line{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+    align-items:center;gap:.75cqw}
+  .study-item{min-width:0;display:flex;flex-direction:column;gap:.65cqh}
+  .study-item span{font-size:clamp(11px,.84cqw,14px);letter-spacing:.15em;color:#8193B0}
+  .study-item strong{font-size:clamp(14px,1.23cqw,20px);line-height:1.23;font-weight:700;color:#EAF2FF}
+  .study-arrow{font-size:1.35cqw;color:var(--amber)}
+  .hobby-list{display:grid;grid-template-columns:1fr 1fr;column-gap:1.15cqw;row-gap:1.15cqh;list-style:none}
+  .hobby-list li{padding-bottom:.7cqh;border-bottom:1px solid rgba(255,255,255,.11);
+    font-size:clamp(13px,1.12cqw,18px);font-weight:650;line-height:1.25;color:#E2ECFA}
+  .is-active .identity{animation:rise .72s var(--ease-out) both}
+  .is-active .contact-focus{animation:rise .62s .12s var(--ease-out) both}
+  .is-active .details{animation:rise .62s .2s var(--ease-out) both}
+  .is-active .top{animation:fade .45s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(1.2cqh)}to{opacity:1;transform:none}}
+
+  /* ══════════ 拼图页 ══════════ */
+  .photo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+  .slide.is-active .photo-img{animation:slow-zoom 60s ease-in-out infinite alternate}
+  @keyframes slow-zoom{from{transform:scale(1)}to{transform:scale(1.028)}}
+  .photo-title{position:absolute;left:3.2cqw;top:5.4cqh;z-index:2;display:flex;align-items:center;
+    gap:.6cqw;padding:.95cqh 1.7cqw;border-radius:999px;
+    font-size:1.42cqw;font-weight:800;letter-spacing:.1em;color:#EAF2FF;
+    background:rgba(5,9,20,.55);border:1px solid rgba(56,189,248,.40);
+    -webkit-backdrop-filter:blur(1.2cqw);backdrop-filter:blur(1.2cqw);
+    box-shadow:0 1.4cqh 3.4cqw rgba(0,0,0,.5),0 0 3cqw rgba(56,189,248,.18)}
+  .photo-title i{width:.5cqw;height:.5cqw;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 1cqw var(--cyan)}
+  .photo-hint{position:absolute;right:3.2cqw;bottom:8.6cqh;z-index:2;font-size:1cqw;
+    letter-spacing:.16em;color:rgba(200,216,240,.80);
+    text-shadow:0 2px 12px rgba(0,0,0,.95)}
+
+  /* ══════════ HUD ══════════ */
+  .hud{position:absolute;left:5cqw;right:5cqw;bottom:2.6cqh;z-index:20;
+    display:flex;align-items:center;gap:.6cqw;font-size:1cqw;letter-spacing:.1em;
+    color:#93A3C0;font-variant-numeric:tabular-nums;
+    text-shadow:0 2px 12px rgba(0,0,0,.95),0 1px 3px rgba(0,0,0,.9)}
+  .hud .spacer{margin-left:auto}
+  .hud button{padding:.6cqh 1cqw;border-radius:999px;font-size:.94cqw;
+    color:#D6E4FA;background:rgba(8,14,28,.58);border:1px solid rgba(56,189,248,.26);
+    -webkit-backdrop-filter:blur(1cqw);backdrop-filter:blur(1cqw);
+    transition:border-color .18s ease,color .18s ease,transform .14s var(--ease-out)}
+  .hud button:active{transform:scale(.97)}
+  .hud button:focus-visible,.hud input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  @media (hover:hover) and (pointer:fine){.hud button:hover{border-color:var(--cyan);color:var(--cyan)}}
+  .hud input{width:3.4cqw;padding:.6cqh .4cqw;border-radius:.7cqw;text-align:center;
+    font:inherit;font-size:.94cqw;color:#D6E4FA;
+    background:rgba(8,14,28,.58);border:1px solid rgba(56,189,248,.26)}
+
+  .progress{position:absolute;left:0;top:0;height:2px;width:0;z-index:30;
+    background:linear-gradient(90deg,var(--cyan),var(--amber));
+    box-shadow:0 0 1.4cqw rgba(56,189,248,.85);transition:width .3s var(--ease-out)}
+
+  /* 竖屏：将封面改为可滚动的信息流，导航固定在安全区内 */
+  @media (max-aspect-ratio:4/5){
+    .deck{width:100vw;height:100vh;height:100dvh;container-type:size}
+    .wrap{display:block;overflow-y:auto;overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+      padding:max(1.2rem,env(safe-area-inset-top)) 1.15rem calc(6.6rem + env(safe-area-inset-bottom))}
+    .top{gap:.6rem;font-size:.72rem;letter-spacing:.22em}
+    .top .dot{width:.38rem;height:.38rem;box-shadow:0 0 .65rem var(--cyan)}
+    .top .no{font-size:.72rem}
+    .home-main{display:block;margin-top:2.45rem;padding:0}
+    .eyebrow{margin-bottom:.8rem;font-size:.68rem;letter-spacing:.19em}
+    .name{font-size:clamp(5.1rem,20vw,7.2rem);line-height:1;letter-spacing:-.045em;
+      filter:drop-shadow(0 0 1rem rgba(56,189,248,.32)) drop-shadow(0 .25rem .6rem rgba(0,0,0,.48))}
+    .identity-meta{gap:.55rem;margin-top:1.2rem}
+    .role{padding:.22rem .55rem;border-left:2px solid var(--amber);font-size:.88rem}
+    .meta-dot{width:4px;height:4px}
+    .meta-text{font-size:.8rem;line-height:1.4}
+    .contact-focus{margin-top:2.15rem;padding:1rem 0 0;border-left:0;border-top:1px solid rgba(56,189,248,.38)}
+    .section-label{font-size:.7rem;letter-spacing:.2em}
+    .contact-focus-row{gap:.85rem;margin-top:.85rem}
+    .contact-qr{width:min(50vw,240px);padding:.3rem;border-radius:.55rem}
+    .contact-method{font-size:.82rem}
+    .contact-site-label{margin-top:.75rem;font-size:.68rem;letter-spacing:.09em}
+    .contact-site{margin-top:.3rem;font-size:clamp(.85rem,4vw,1rem)}
+    .contact-hint{margin-top:.75rem;font-size:.68rem}
+    .details{grid-template-columns:minmax(0,1fr);gap:0;min-height:0;margin-top:1.65rem;
+      padding:0 0 1rem;border-top:1px solid rgba(186,230,253,.22)}
+    .detail-block,.detail-block:first-child{padding:1.05rem 0}
+    .detail-block+.detail-block{border-left:0;border-top:1px solid rgba(186,230,253,.15)}
+    .detail-heading{gap:.55rem;margin-bottom:.85rem}
+    .detail-heading .index{font-size:.65rem}
+    .detail-heading h2{font-size:.76rem;letter-spacing:.14em}
+    .study-line{gap:.6rem}
+    .study-item{gap:.35rem}
+    .study-item span{font-size:.65rem}
+    .study-item strong{font-size:.94rem;line-height:1.3}
+    .study-arrow{font-size:1rem}
+    .hobby-list{column-gap:1rem;row-gap:.75rem}
+    .hobby-list li{padding-bottom:.45rem;font-size:.88rem}
+    .hud{left:max(.8rem,env(safe-area-inset-left));right:max(.8rem,env(safe-area-inset-right));
+      bottom:max(.6rem,env(safe-area-inset-bottom));gap:.3rem;font-size:.69rem;letter-spacing:.02em}
+    .hud button{padding:.45rem .63rem;font-size:.8rem}
+    .hud input{width:2.3rem;padding:.4rem .2rem;border-radius:.55rem;font-size:.78rem}
+    .hud span:first-child{white-space:nowrap}
+    .progress{height:3px}
+    .photo-title{left:1rem;top:max(1rem,env(safe-area-inset-top));gap:.45rem;
+      padding:.65rem .95rem;font-size:.82rem}
+    .photo-title i{width:.35rem;height:.35rem}
+    .photo-hint{right:1rem;bottom:5.2rem;font-size:.66rem;letter-spacing:.1em}
+  }
+
+  @media (max-width:360px) and (max-aspect-ratio:4/5){
+    .wrap{padding-left:.8rem;padding-right:.8rem}
+    .hud{left:.55rem;right:.55rem;gap:.22rem}
+    .hud button{padding:.4rem .48rem;font-size:.74rem}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+    .slide,.slide.is-active{transition:opacity .16s ease-out !important}
+    .is-active .identity,.is-active .contact-focus,.is-active .details,.is-active .top{
+      opacity:1 !important;transform:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="deck" id="deck">
+
+    <!-- ═════ 1 · 首页 ═════ -->
+    <section class="slide is-active">
+      <img class="bg" src="ppt-assets/bg-harbour.jpg" alt="">
+      <div class="veil"></div>
+      <div class="grid"></div>
+
+      <div class="wrap">
+        <header class="top">
+          <span class="dot"></span><span>PROFILE</span>
+          <span class="no" id="no1">01 / 07</span>
+        </header>
+
+        <main class="home-main">
+          <section class="identity" aria-label="个人身份">
+            <p class="eyebrow">RENJI COLLEGE · STUDENT PROFILE</p>
+            <h1 class="name">黄映焜</h1>
+            <div class="identity-meta">
+              <span class="role">特聘干事</span>
+              <span class="meta-dot" aria-hidden="true"></span>
+              <span class="meta-text">2025 级</span>
+              <span class="meta-dot" aria-hidden="true"></span>
+              <span class="meta-text">仁济学院 · 2026 级临床医学Ⅰ</span>
+            </div>
+          </section>
+
+          <aside class="contact-focus" aria-label="联系方式">
+            <p class="section-label">联系我</p>
+            <div class="contact-focus-row">
+              <img class="contact-qr" src="ppt-assets/wechat-qr.jpg" alt="微信二维码，扫码添加微信">
+              <div class="contact-focus-copy">
+                <p class="contact-method">微信扫码联系</p>
+                <p class="contact-site-label">个人博客网站</p>
+                <a class="contact-site" href="https://blog.Acretiondisk.top" target="_blank" rel="noopener noreferrer">blog.Acretiondisk.top</a>
+                <p class="contact-hint">记录日常与个人分享</p>
+              </div>
+            </div>
+          </aside>
+        </main>
+
+        <section class="details" aria-label="个人信息">
+          <article class="detail-block study-block">
+            <header class="detail-heading"><span class="index">01</span><h2>专业转轨</h2></header>
+            <div class="study-line">
+              <div class="study-item">
+                <span>2025 级</span>
+                <strong>信息管理与<br>信息系统</strong>
+              </div>
+              <span class="study-arrow" aria-hidden="true">→</span>
+              <div class="study-item">
+                <span>2026 级</span>
+                <strong>临床医学Ⅰ</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="detail-block hobbies-block">
+            <header class="detail-heading"><span class="index">02</span><h2>兴趣</h2></header>
+            <ul class="hobby-list">
+              <li>二次元</li>
+              <li>音乐</li>
+              <li>计算机信息技术</li>
+              <li>摄影</li>
+            </ul>
+          </article>
+
+        </section>
+      </div>
+    </section>
+
+    <!-- ═════ 2–7 · 深圳 / 香港 ═════ -->
+    <section class="slide">
+      <img class="photo-img" src="ppt-assets/collage-sz-01.jpg" alt="">
+      <div class="photo-title"><i></i>深圳 01</div>
+      <div class="photo-hint">城市天际线与建筑</div>
+    </section>
+    <section class="slide">
+      <img class="photo-img" src="ppt-assets/collage-sz-02.jpg" alt="">
+      <div class="photo-title"><i></i>深圳 02</div>
+      <div class="photo-hint">公园、绿地与城市地标</div>
+    </section>
+    <section class="slide">
+      <img class="photo-img" src="ppt-assets/collage-sz-03.jpg" alt="">
+      <div class="photo-title"><i></i>深圳 03</div>
+      <div class="photo-hint">入夜之后</div>
+    </section>
+    <section class="slide">
+      <img class="photo-img" src="ppt-assets/collage-hk-01.jpg" alt="">
+      <div class="photo-title"><i></i>香港 01</div>
+      <div class="photo-hint">维多利亚港 · 日与夜</div>
+    </section>
+    <section class="slide">
+      <img class="photo-img" src="ppt-assets/collage-hk-02.jpg" alt="">
+      <div class="photo-title"><i></i>香港 02</div>
+      <div class="photo-hint">街头与路牌</div>
+    </section>
+    <section class="slide">
+      <img class="photo-img" src="ppt-assets/collage-hk-03.jpg" alt="">
+      <div class="photo-title"><i></i>香港 03</div>
+      <div class="photo-hint">楼宇、街道与仰角</div>
+    </section>
+
+    <div class="progress" id="bar"></div>
+
+    <div class="hud">
+      <span>第 <b id="cur">1</b> / <span id="total">7</span> 页</span>
+      <span class="spacer"></span>
+      <button id="prev" title="上一页 ←">←</button>
+      <input id="jump" value="1" inputmode="numeric" title="输入页码后回车">
+      <button id="next" title="下一页 →">→</button>
+      <button id="full" title="全屏 F">⛶ 全屏</button>
+      <button id="help" title="快捷键">?</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var bar = document.getElementById('bar');
+  var cur = document.getElementById('cur');
+  var jump = document.getElementById('jump');
+  var i = 0;
+
+  document.getElementById('total').textContent = slides.length;
+
+  function go(n, silent){
+    i = (n + slides.length) % slides.length;
+    slides.forEach(function(s, k){ s.classList.toggle('is-active', k === i); });
+    bar.style.width = ((i + 1) / slides.length * 100) + '%';
+    cur.textContent = i + 1;
+    if (document.activeElement !== jump) jump.value = i + 1;
+    if (!silent && history.replaceState) history.replaceState(null, '', '#' + (i + 1));
+    armGuard();
+  }
+
+  // 兜底：入场动画若因任何原因没跑完（省电策略、快照、异常），强制让内容可见，
+  // 保证现场放映时绝不出现「空白页」。
+  var guard;
+  function armGuard(){
+    clearTimeout(guard);
+    guard = setTimeout(function(){
+      Array.prototype.forEach.call(
+        slides[i].querySelectorAll('.identity,.contact-focus,.details,.top'),
+        function(el){
+          if (parseFloat(getComputedStyle(el).opacity) < 0.9){
+            el.style.animation = 'none';
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+          }
+        });
+    }, 2600);
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown'){
+      e.preventDefault(); go(i + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp'){
+      e.preventDefault(); go(i - 1);
+    } else if (e.key === 'Home'){ e.preventDefault(); go(0); }
+    else if (e.key === 'End'){ e.preventDefault(); go(slides.length - 1); }
+    else if (e.key === 'f' || e.key === 'F'){ toggleFull(); }
+    else if (e.key >= '1' && e.key <= '9'){ go(parseInt(e.key, 10) - 1); }
+  });
+
+  document.getElementById('prev').onclick = function(){ go(i - 1); };
+  document.getElementById('next').onclick = function(){ go(i + 1); };
+  jump.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){
+      var v = parseInt(jump.value, 10);
+      if (v >= 1 && v <= slides.length) go(v - 1);
+      jump.blur();
+    }
+  });
+  document.getElementById('help').onclick = function(){
+    alert('← → 翻页 ／ 空格下一页 ／ 1-7 直接跳页 ／ F 全屏 ／ Home End 首末页');
+  };
+
+  function toggleFull(){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  }
+  document.getElementById('full').onclick = toggleFull;
+
+  // 点击画面右侧翻页，左侧回退
+  document.getElementById('deck').addEventListener('click', function(e){
+    if (e.target.closest('.hud')) return;
+    if (e.clientX > window.innerWidth * 0.72) go(i + 1);
+    else if (e.clientX < window.innerWidth * 0.28) go(i - 1);
+  });
+
+  // 支持 #页码 直接跳页（例如 index.html#4）
+  var start = parseInt((location.hash || '').replace('#', ''), 10);
+  go(!isNaN(start) ? start - 1 : 0);
+  window.addEventListener('hashchange', function(){
+    var n = parseInt((location.hash || '').replace('#', ''), 10);
+    if (!isNaN(n)) go(n - 1, true);
+  });
+})();
+</script>
+</body>
+</html>
